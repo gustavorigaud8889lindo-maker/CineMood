@@ -6,46 +6,43 @@ Aplicativo desenvolvido com React Native, Expo e TypeScript. O app apresenta uma
 
 - Gustavo Ferreira Rigaud
 - Antônio Pedro Roriz
+- Felipe Loureiro
 
-## Funcionalidades do MVP
+## Funcionalidades
 
-- Listagem de filmes consumidos de uma API;
-- Exibição de três filmes por fileira;
-- Card reutilizável com pôster, título e nota;
-- Navegação entre a tela inicial e a tela de detalhes;
-- Exibição de sinopse, diretor, produtor, duração, nota e ano;
-- Duração formatada em horas e minutos;
-- Indicador de carregamento;
-- Tratamento de erro na comunicação com a API;
-- Botão para tentar carregar os dados novamente;
-- Manutenção do estado da lista ao voltar dos detalhes;
-- Layout adaptado para Web, Android e iOS;
-- Teste automatizado de uma função isolada.
+- Listagem de filmes consumidos de uma API
+- Exibição de três filmes por fileira
+- Card reutilizável com pôster, título e nota
+- Navegação entre a tela inicial e a tela de detalhes
+- Exibição de sinopse, diretor, produtor, duração e ano
+- Formatação da duração em horas e minutos
+- Indicador de carregamento
+- Tratamento de erro na comunicação com a API
+- Botão para tentar novamente após uma falha
+- Layout adaptado para Web, Android e iOS
 
 ## Tecnologias utilizadas
 
-- React Native;
-- Expo SDK 57;
-- TypeScript;
-- Axios;
-- React Navigation;
-- Native Stack Navigator;
-- Ionicons;
-- Jest;
-- jest-expo;
-- Studio Ghibli API.
+- React Native
+- Expo SDK 57
+- TypeScript
+- Axios
+- React Navigation
+- Native Stack Navigator
+- Ionicons
+- Jest
+- Jest Expo
+- Studio Ghibli API
 
 ## Bibliotecas escolhidas
 
 ### Navegação
 
-Foram utilizadas as bibliotecas `@react-navigation/native` e `@react-navigation/native-stack`. Elas organizam a navegação entre a tela inicial e a tela de detalhes.
+Foram utilizadas as bibliotecas `@react-navigation/native` e `@react-navigation/native-stack`. Elas permitem organizar a navegação entre a tela inicial e a tela de detalhes, possuem boa documentação e são muito utilizadas em projetos React Native.
 
-O objeto do filme selecionado é enviado como parâmetro para a tela de detalhes. Dessa maneira, não é necessário realizar outra requisição à API.
+### Consumo de API
 
-### Consumo da API
-
-Foi utilizado o `axios`. Ele facilita a realização de requisições HTTP e permite manter a configuração da API centralizada em `services/api.ts`.
+Foi utilizado o `axios`. Ele facilita a realização de requisições HTTP e deixa a configuração da API centralizada e organizada.
 
 ### Ícones
 
@@ -53,15 +50,17 @@ Foi utilizada a biblioteca `@expo/vector-icons`, com os ícones Ionicons. Ela po
 
 ### Testes
 
-Foram utilizados o Jest e o `jest-expo`. O teste automatizado verifica a função `formatRuntime`, responsável por transformar a duração recebida da API em horas e minutos.
+Foram utilizados o `Jest` e o `Jest Expo` para executar testes automatizados. O teste criado verifica o funcionamento da função que transforma a duração dos filmes de minutos para horas e minutos.
+
+### Dependências compatíveis com o Expo
+
+As bibliotecas `react-native-screens`, `react-native-safe-area-context` e `@expo/vector-icons` foram instaladas com `npx expo install`. Esse comando seleciona versões compatíveis com o SDK atual do Expo.
 
 ## API utilizada
 
 O projeto utiliza a Studio Ghibli API:
 
-```text
 https://ghibliapi.vercel.app/films
-```
 
 A API fornece títulos, pôsteres, imagens, sinopses, notas e outras informações exibidas no aplicativo.
 
@@ -85,31 +84,64 @@ catalogo-filmes/
 │       └── movieFormatter.ts
 ├── App.tsx
 ├── package.json
-├── PERGUNTAS_E_RESPOSTAS.md
 ├── PERGUNTAS_E_RESPOSTAS_MVP.md
 └── README.md
 ```
 
 ## Organização das pastas
 
-- `components`: componentes reutilizáveis do aplicativo;
-- `screens`: telas exibidas ao usuário;
-- `services`: comunicação com a API e funções relacionadas aos dados;
-- `navigation`: configuração da navegação entre as telas;
-- `assets`: imagens e recursos visuais locais;
-- `__tests__`: testes automatizados.
+- `components`: componentes reutilizáveis do aplicativo.
+- `screens`: telas exibidas ao usuário.
+- `services`: configuração, comunicação com a API e funções auxiliares.
+- `navigation`: configuração da navegação entre as telas.
+- `assets`: imagens e recursos visuais locais.
+- `__tests__`: testes automatizados do projeto.
 
 ## Fluxo de dados
 
-A tela inicial solicita os filmes por meio da função localizada em `services/api.ts`. Os dados recebidos são apresentados pelo componente `MovieCard`.
+A tela inicial solicita os filmes por meio da função localizada em `services/api.ts`. Enquanto os dados estão sendo carregados, o aplicativo apresenta um indicador de carregamento.
 
-Quando o usuário toca em um card, o objeto do filme é enviado pela navegação para a tela de detalhes. A tela de detalhes reaproveita esses dados sem realizar uma nova requisição.
+Os dados recebidos são apresentados pelo componente reutilizável `MovieCard`. Quando o usuário toca em um card, o filme selecionado é enviado pela navegação para a tela de detalhes.
 
-## Estados da interface
+A tela de detalhes reutiliza as informações recebidas da tela inicial, evitando uma nova requisição à API. Ao voltar para a listagem, o estado da tela é mantido.
 
-Durante a requisição, o aplicativo mostra um indicador e a mensagem “Carregando filmes...”.
+Se ocorrer uma falha na comunicação com a API, o aplicativo apresenta uma mensagem de erro e um botão para tentar novamente.
 
-Caso a requisição falhe, o aplicativo apresenta uma mensagem de erro e o botão “Tentar novamente”, que realiza uma nova tentativa de comunicação com a API.
+## Teste automatizado
+
+Foi criado um teste automatizado para a função `formatRuntime`, localizada no arquivo `src/services/movieFormatter.ts`.
+
+O teste verifica os seguintes casos:
+
+- Transformação de 124 minutos em `2h 4min`
+- Transformação de 60 minutos em `1h`
+- Tratamento de uma duração inválida
+
+Para executar os testes:
+
+```bash
+npm test
+```
+
+O resultado esperado é de uma suíte de testes aprovada, com três testes executados com sucesso.
+
+## Testes manuais
+
+O fluxo principal foi testado nos seguintes ambientes:
+
+- Navegador Web no Windows
+- iPhone utilizando o Expo Go
+
+Foram testadas as seguintes ações:
+
+- Carregamento da lista de filmes
+- Exibição dos cards em três colunas
+- Abertura da tela de detalhes
+- Exibição das informações completas
+- Retorno para a tela inicial
+- Manutenção do estado da listagem
+- Exibição do estado de carregamento
+- Funcionamento do botão de tentar novamente
 
 ## Como executar o projeto
 
@@ -125,48 +157,20 @@ Inicie o Expo:
 npx expo start
 ```
 
-Execute no navegador:
+Para executar diretamente no navegador:
 
 ```bash
 npx expo start --web
 ```
 
-No Windows, caso o PowerShell bloqueie os comandos, utilize:
-
-```powershell
-npm.cmd install
-npx.cmd expo start
-```
-
-## Como executar o teste
+Para executar os testes automatizados:
 
 ```bash
 npm test
 ```
 
-No Windows:
-
-```powershell
-npm.cmd test
-```
-
-O projeto possui três casos de teste para a função `formatRuntime`:
-
-- Conversão de 124 minutos para `2h 4min`;
-- Conversão de 60 minutos para `1h`;
-- Tratamento de uma duração inválida.
-
-## Testes manuais
-
-O fluxo listagem → detalhes → voltar foi testado nos seguintes ambientes:
-
-- Navegador Web em computador Windows;
-- iPhone utilizando o Expo Go.
-
-Nos dois ambientes, a listagem, a navegação, os detalhes e o retorno à posição da lista funcionaram corretamente.
-
 ## Estado atual
 
-O projeto já possui um MVP utilizável. A listagem consome dados reais da API, os cards abrem a tela de detalhes, os estados de carregamento e erro estão tratados e o usuário pode tentar novamente após uma falha.
+O projeto possui um MVP funcional com listagem de filmes, consumo de API, cards reutilizáveis, navegação, tela de detalhes, indicador de carregamento, tratamento de erro, opção de tentar novamente e teste automatizado.
 
-O teste automatizado foi executado com sucesso, com uma suíte e três testes aprovados.
+A aplicação foi testada manualmente na Web e em um iPhone com Expo Go. O fluxo de listagem, detalhes e retorno para a tela inicial está funcionando corretamente.
