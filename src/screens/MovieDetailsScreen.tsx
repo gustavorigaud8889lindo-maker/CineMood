@@ -9,6 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { Movie } from '../services/api';
+import { formatRuntime } from '../services/movieFormatter';
 
 export default function MovieDetailsScreen() {
   const route = useRoute<any>();
@@ -30,6 +31,7 @@ export default function MovieDetailsScreen() {
 
         <View style={styles.score}>
           <Ionicons name="star" size={22} color="#f5c518" />
+
           <Text style={styles.scoreText}>
             {movie.rt_score} / 100
           </Text>
@@ -40,7 +42,7 @@ export default function MovieDetailsScreen() {
         </Text>
 
         <Text style={styles.information}>
-          Duração: {movie.running_time} minutos
+          Duração: {formatRuntime(movie.running_time)}
         </Text>
 
         <Text style={styles.information}>

@@ -7,45 +7,53 @@ Aplicativo desenvolvido com React Native, Expo e TypeScript. O app apresenta uma
 - Gustavo Ferreira Rigaud
 - Antônio Pedro Roriz
 
-## Funcionalidades
+## Funcionalidades do MVP
 
-- Listagem de filmes consumidos de uma API
-- Exibição de três filmes por fileira
-- Card reutilizável com pôster, título e nota
-- Navegação entre a tela inicial e a tela de detalhes
-- Exibição de sinopse, diretor, produtor, duração e ano
-- Indicador de carregamento
-- Tratamento de erro na comunicação com a API
-- Layout adaptado para Web, Android e iOS
+- Listagem de filmes consumidos de uma API;
+- Exibição de três filmes por fileira;
+- Card reutilizável com pôster, título e nota;
+- Navegação entre a tela inicial e a tela de detalhes;
+- Exibição de sinopse, diretor, produtor, duração, nota e ano;
+- Duração formatada em horas e minutos;
+- Indicador de carregamento;
+- Tratamento de erro na comunicação com a API;
+- Botão para tentar carregar os dados novamente;
+- Manutenção do estado da lista ao voltar dos detalhes;
+- Layout adaptado para Web, Android e iOS;
+- Teste automatizado de uma função isolada.
 
 ## Tecnologias utilizadas
 
-- React Native
-- Expo SDK 57
-- TypeScript
-- Axios
-- React Navigation
-- Native Stack Navigator
-- Ionicons
-- Studio Ghibli API
+- React Native;
+- Expo SDK 57;
+- TypeScript;
+- Axios;
+- React Navigation;
+- Native Stack Navigator;
+- Ionicons;
+- Jest;
+- jest-expo;
+- Studio Ghibli API.
 
 ## Bibliotecas escolhidas
 
 ### Navegação
 
-Foram utilizadas as bibliotecas `@react-navigation/native` e `@react-navigation/native-stack`. Elas permitem organizar a navegação entre a tela inicial e a tela de detalhes, possuem boa documentação e são muito utilizadas em projetos React Native.
+Foram utilizadas as bibliotecas `@react-navigation/native` e `@react-navigation/native-stack`. Elas organizam a navegação entre a tela inicial e a tela de detalhes.
 
-### Consumo de API
+O objeto do filme selecionado é enviado como parâmetro para a tela de detalhes. Dessa maneira, não é necessário realizar outra requisição à API.
 
-Foi utilizado o `axios`. Ele facilita a realização de requisições HTTP e deixa a configuração da API centralizada e organizada.
+### Consumo da API
+
+Foi utilizado o `axios`. Ele facilita a realização de requisições HTTP e permite manter a configuração da API centralizada em `services/api.ts`.
 
 ### Ícones
 
 Foi utilizada a biblioteca `@expo/vector-icons`, com os ícones Ionicons. Ela possui integração com o Expo e disponibiliza diversos ícones prontos.
 
-### Dependências compatíveis com o Expo
+### Testes
 
-As bibliotecas `react-native-screens`, `react-native-safe-area-context` e `@expo/vector-icons` foram instaladas com `npx expo install`. Esse comando seleciona versões compatíveis com o SDK atual do Expo.
+Foram utilizados o Jest e o `jest-expo`. O teste automatizado verifica a função `formatRuntime`, responsável por transformar a duração recebida da API em horas e minutos.
 
 ## API utilizada
 
@@ -55,7 +63,7 @@ O projeto utiliza a Studio Ghibli API:
 https://ghibliapi.vercel.app/films
 ```
 
-A API fornece os títulos, pôsteres, imagens, sinopses, notas e outras informações exibidas no aplicativo.
+A API fornece títulos, pôsteres, imagens, sinopses, notas e outras informações exibidas no aplicativo.
 
 ## Estrutura do projeto
 
@@ -71,23 +79,37 @@ catalogo-filmes/
 │   │   ├── HomeScreen.tsx
 │   │   └── MovieDetailsScreen.tsx
 │   └── services/
-│       └── api.ts
+│       ├── __tests__/
+│       │   └── movieFormatter.test.ts
+│       ├── api.ts
+│       └── movieFormatter.ts
 ├── App.tsx
 ├── package.json
+├── PERGUNTAS_E_RESPOSTAS.md
+├── PERGUNTAS_E_RESPOSTAS_MVP.md
 └── README.md
 ```
 
 ## Organização das pastas
 
-- `components`: componentes reutilizáveis do aplicativo.
-- `screens`: telas exibidas ao usuário.
-- `services`: configuração e comunicação com a API.
-- `navigation`: configuração da navegação entre as telas.
-- `assets`: imagens e recursos visuais locais.
+- `components`: componentes reutilizáveis do aplicativo;
+- `screens`: telas exibidas ao usuário;
+- `services`: comunicação com a API e funções relacionadas aos dados;
+- `navigation`: configuração da navegação entre as telas;
+- `assets`: imagens e recursos visuais locais;
+- `__tests__`: testes automatizados.
 
 ## Fluxo de dados
 
-A tela inicial solicita os filmes por meio da função localizada em `services/api.ts`. Os dados recebidos são apresentados pelo componente `MovieCard`. Quando o usuário toca em um card, o filme selecionado é enviado pela navegação para a tela de detalhes.
+A tela inicial solicita os filmes por meio da função localizada em `services/api.ts`. Os dados recebidos são apresentados pelo componente `MovieCard`.
+
+Quando o usuário toca em um card, o objeto do filme é enviado pela navegação para a tela de detalhes. A tela de detalhes reaproveita esses dados sem realizar uma nova requisição.
+
+## Estados da interface
+
+Durante a requisição, o aplicativo mostra um indicador e a mensagem “Carregando filmes...”.
+
+Caso a requisição falhe, o aplicativo apresenta uma mensagem de erro e o botão “Tentar novamente”, que realiza uma nova tentativa de comunicação com a API.
 
 ## Como executar o projeto
 
@@ -103,12 +125,48 @@ Inicie o Expo:
 npx expo start
 ```
 
-Para executar diretamente no navegador:
+Execute no navegador:
 
 ```bash
 npx expo start --web
 ```
 
+No Windows, caso o PowerShell bloqueie os comandos, utilize:
+
+```powershell
+npm.cmd install
+npx.cmd expo start
+```
+
+## Como executar o teste
+
+```bash
+npm test
+```
+
+No Windows:
+
+```powershell
+npm.cmd test
+```
+
+O projeto possui três casos de teste para a função `formatRuntime`:
+
+- Conversão de 124 minutos para `2h 4min`;
+- Conversão de 60 minutos para `1h`;
+- Tratamento de uma duração inválida.
+
+## Testes manuais
+
+O fluxo listagem → detalhes → voltar foi testado nos seguintes ambientes:
+
+- Navegador Web em computador Windows;
+- iPhone utilizando o Expo Go.
+
+Nos dois ambientes, a listagem, a navegação, os detalhes e o retorno à posição da lista funcionaram corretamente.
+
 ## Estado atual
 
-O projeto foi criado com Expo SDK 57, as bibliotecas foram instaladas em versões compatíveis e a versão Web foi executada sem erros. A listagem, o consumo da API e a navegação para os detalhes foram testados manualmente.
+O projeto já possui um MVP utilizável. A listagem consome dados reais da API, os cards abrem a tela de detalhes, os estados de carregamento e erro estão tratados e o usuário pode tentar novamente após uma falha.
+
+O teste automatizado foi executado com sucesso, com uma suíte e três testes aprovados.
